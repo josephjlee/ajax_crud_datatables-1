@@ -31,13 +31,17 @@ class Person extends CI_Controller {
 			$row[] = $person->address;
 			$row[] = $person->dob;
 			if($person->photo)
-				$row[] = '<a href="'.base_url('upload/'.$person->photo).'" target="_blank"><img src="'.base_url('upload/'.$person->photo).'" class="img-responsive" /></a>';
+				$row[] = '<a href="'.base_url('upload/'.$person->photo).'" target="_blank">'.$person->photo.'</a>';
 			else
-				$row[] = '(No photo)';
+				$row[] = '(No File)';
 
 			//add html for action
-			$row[] = '<a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Edit" onclick="edit_person('."'".$person->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Edit</a>
-				  <a class="btn btn-sm btn-danger" href="javascript:void(0)" title="Hapus" onclick="delete_person('."'".$person->id."'".')"><i class="glyphicon glyphicon-trash"></i> Delete</a>';
+			$row[] = '
+			<a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Edit" onclick="edit_person('."'".$person->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Edit</a>
+			<a class="btn btn-sm btn-danger" href="javascript:void(0)" title="Hapus" onclick="delete_person('."'".$person->id."'".')"><i class="glyphicon glyphicon-trash"></i> Delete</a>
+	
+			<a class="btn btn-sm btn-info" href="javascript:void(0)" title="Approve" onclick="approve('."'".$person->id."'".')"><i class="glyphicon glyphicon-file"></i> APPROVE</a>
+			';
 		
 			$data[] = $row;
 		}
@@ -61,7 +65,7 @@ class Person extends CI_Controller {
 
 	public function ajax_add()
 	{
-		$this->_validate();
+//		$this->_validate();
 		
 		$data = array(
 				'firstName' => $this->input->post('firstName'),
@@ -71,6 +75,15 @@ class Person extends CI_Controller {
 				'dob' => $this->input->post('dob'),
 			);
 
+			
+//Baca CSV file
+//hitung rows nya
+
+$fp = file($_FILES['photo']['tmp_name']);
+$jumlah_rows =  count($fp)-1; //tifak termasuk header
+// $jumlah_rows =  1234;
+
+/*
 		if(!empty($_FILES['photo']['name']))
 		{
 			$upload = $this->_do_upload();
@@ -78,8 +91,14 @@ class Person extends CI_Controller {
 		}
 
 		$insert = $this->person->save($data);
+*/ 
 
-		echo json_encode(array("status" => TRUE));
+		echo json_encode(
+		array(
+		"jumlah_rows" => $jumlah_rows,
+		"status" => TRUE,
+		)
+		);
 	}
 
 	public function ajax_update()
@@ -130,11 +149,15 @@ class Person extends CI_Controller {
 	private function _do_upload()
 	{
 		$config['upload_path']          = 'upload/';
+        $config['allowed_types']        = 'csv';
+/*
         $config['allowed_types']        = 'gif|jpg|png';
         $config['max_size']             = 100; //set max size allowed in Kilobyte
         $config['max_width']            = 1000; // set max width image allowed
         $config['max_height']           = 1000; // set max height allowed
         $config['file_name']            = round(microtime(true) * 1000); //just milisecond timestamp fot unique name
+*/		
+        $config['file_name']            = round(microtime(true) * 1000); //ambil batchID Upload
 
         $this->load->library('upload', $config);
 

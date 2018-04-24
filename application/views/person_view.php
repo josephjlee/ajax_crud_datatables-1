@@ -32,9 +32,9 @@
                     <th>Last Name</th>
                     <th>Gender</th>
                     <th>Address</th>
-                    <th>Date of Birth</th>
-                    <th>Photo</th>
-                    <th style="width:150px;">Action</th>
+                    <th>Date Proses</th>
+                    <th>File</th>
+                    <th style="width:150px;">ACT</th>
                 </tr>
             </thead>
             <tbody>
@@ -217,6 +217,10 @@ function save()
         success: function(data)
         {
 
+		
+		console.log(data);
+		
+		
             if(data.status) //if success close modal and reload ajax table
             {
                 $('#modal_form').modal('hide');
@@ -268,6 +272,43 @@ function delete_person(id)
 
     }
 }
+
+
+
+//dev
+function approve(id)
+{
+    if(confirm('Are you sure Approve this data?'))
+    {
+		
+console.log(id);		
+console.log('appprove');		
+/*
+        // ajax delete data to database
+        $.ajax({
+            url : "<?php echo site_url('person/ajax_delete')?>/"+id,
+            type: "POST",
+            dataType: "JSON",
+            success: function(data)
+            {
+                //if success reload ajax table
+                $('#modal_form').modal('hide');
+                reload_table();
+            },
+            error: function (jqXHR, textStatus, errorThrown)
+            {
+                alert('Error deleting data');
+            }
+        });
+*/		
+
+    }
+}
+
+
+
+
+
 
 </script>
 
